@@ -36,10 +36,6 @@ public class IndexedQueryEngine implements QueryEngine {
   private IndexManager indexManager;
   private LocalDocumentsView localDocuments;
 
-  public IndexedQueryEngine() {
-    hardAssert(Persistence.INDEXING_SUPPORT_ENABLED, "Indexing support not enbabled");
-  }
-
   @Override
   public void setLocalDocumentsView(LocalDocumentsView localDocuments) {
     this.localDocuments = localDocuments;

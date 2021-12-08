@@ -307,9 +307,6 @@ public class FirebaseFirestore {
   Task<Void> setIndexConfiguration(String json) {
     ensureClientConfigured();
 
-    // Preconditions.checkState(BuildConfig.ENABLE_INDEXING, "Indexing support is not yet
-    // available.");
-
     List<FieldIndex> parsedIndices = new ArrayList<>();
 
     // See https://firebase.google.com/docs/reference/firestore/indexes/#json_format for the

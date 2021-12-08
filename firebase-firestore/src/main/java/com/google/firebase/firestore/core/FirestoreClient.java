@@ -156,9 +156,7 @@ public final class FirestoreClient {
             gcScheduler.stop();
           }
 
-          if (Persistence.INDEXING_SUPPORT_ENABLED) {
-            indexBackfiller.getScheduler().stop();
-          }
+          indexBackfiller.getScheduler().stop();
         });
   }
 
@@ -283,7 +281,7 @@ public final class FirestoreClient {
       gcScheduler.start();
     }
 
-    if (Persistence.INDEXING_SUPPORT_ENABLED && settings.isPersistenceEnabled()) {
+    if (settings.isPersistenceEnabled()) {
       indexBackfiller.getScheduler().start();
     }
   }

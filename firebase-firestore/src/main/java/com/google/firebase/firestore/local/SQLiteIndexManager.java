@@ -96,11 +96,6 @@ final class SQLiteIndexManager implements IndexManager {
 
   @Override
   public void start() {
-    if (!Persistence.INDEXING_SUPPORT_ENABLED) {
-      started = true;
-      return;
-    }
-
     Map<Integer, FieldIndex.IndexState> indexStates = new HashMap<>();
 
     // Fetch all index states if persisted for the user. These states contain per user information

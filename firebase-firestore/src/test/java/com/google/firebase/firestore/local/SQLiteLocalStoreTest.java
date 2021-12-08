@@ -14,6 +14,13 @@
 
 package com.google.firebase.firestore.local;
 
+import static com.google.common.truth.Truth.assertThat;
+import static com.google.firebase.firestore.testutil.TestUtil.fieldIndex;
+
+import com.google.firebase.firestore.model.FieldIndex;
+import java.util.Arrays;
+import java.util.Collection;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
@@ -21,8 +28,6 @@ import org.robolectric.annotation.Config;
 @RunWith(RobolectricTestRunner.class)
 @Config(manifest = Config.NONE)
 public class SQLiteLocalStoreTest extends LocalStoreTestCase {
-  private static boolean enabled = false;
-
   @Override
   Persistence getPersistence() {
     return PersistenceTestHelpers.createSQLitePersistence();
@@ -31,5 +36,30 @@ public class SQLiteLocalStoreTest extends LocalStoreTestCase {
   @Override
   boolean garbageCollectorIsEager() {
     return false;
+  }
+
+  @Test
+  public void testConfiguresIndexes() {
+    FieldIndex indexA =
+        fieldIndex("coll", 0, FieldIndex.INITIAL_STATE, "a", FieldIndex.Segment.Kind.ASCENDING);
+    FieldIndex indexB =
+        fieldIndex("coll", 1, FieldIndex.INITIAL_STATE, "b", FieldIndex.Segment.Kind.DESCENDING);
+    FieldIndex indexC =
+        fieldIndex(
+            "coll",
+            2,
+            FieldIndex.INITIAL_STATE,
+            "c1",
+            FieldIndex.Segment.Kind.ASCENDING,
+            "c2",
+            FieldIndex.Segment.Kind.CONTAINS);
+
+    configureFieldIndexes(Arrays.asList(indexA, indexB));
+    Collection<FieldIndex> fieldIndexes = getFieldIndexes();
+    assertThat(fieldIndexes).containsExactly(indexA, indexB);
+
+    configureFieldIndexes(Arrays.asList(indexA, indexC));
+    fieldIndexes = getFieldIndexes();
+    assertThat(fieldIndexes).containsExactly(indexA, indexC);
   }
 }

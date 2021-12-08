@@ -29,7 +29,6 @@ import com.google.firebase.firestore.model.DocumentKey;
 import com.google.firebase.firestore.model.MutableDocument;
 import com.google.firebase.firestore.model.SnapshotVersion;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
@@ -38,22 +37,10 @@ import org.robolectric.annotation.Config;
 @RunWith(RobolectricTestRunner.class)
 @Config(manifest = Config.NONE)
 public class IndexedQueryEngineTest {
-  /** Current state of indexing support. Used for restoring after test run. */
-  private static final boolean supportsIndexing = Persistence.INDEXING_SUPPORT_ENABLED;
 
   private IndexedQueryEngine queryEngine;
   private IndexManager indexManager;
   private RemoteDocumentCache remoteDocuments;
-
-  @BeforeClass
-  public static void beforeClass() {
-    Persistence.INDEXING_SUPPORT_ENABLED = true;
-  }
-
-  @BeforeClass
-  public static void afterClass() {
-    Persistence.INDEXING_SUPPORT_ENABLED = supportsIndexing;
-  }
 
   @Before
   public void setUp() {
