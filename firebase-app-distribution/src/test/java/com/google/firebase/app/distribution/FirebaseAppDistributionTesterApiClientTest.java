@@ -16,6 +16,7 @@ package com.google.firebase.app.distribution;
 
 import static androidx.test.InstrumentationRegistry.getContext;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThrows;
 import static org.mockito.Mockito.when;
 
@@ -47,7 +48,8 @@ public class FirebaseAppDistributionTesterApiClientTest {
 
   private FirebaseAppDistributionTesterApiClient firebaseAppDistributionTesterApiClient;
   private Context applicationContext;
-  @Mock private HttpsURLConnection mockHttpsURLConnection;
+  @Mock
+  private HttpsURLConnection mockHttpsURLConnection;
 
   @Before
   public void setup() throws Exception {
@@ -58,11 +60,12 @@ public class FirebaseAppDistributionTesterApiClientTest {
     firebaseAppDistributionTesterApiClient =
         Mockito.spy(new FirebaseAppDistributionTesterApiClient());
 
+    applicationContext = ApplicationProvider.getApplicationContext();
+
     Mockito.doReturn(mockHttpsURLConnection)
         .when(firebaseAppDistributionTesterApiClient)
-        .openHttpsUrlConnection(TEST_APP_ID_1, TEST_FID_1);
-
-    applicationContext = ApplicationProvider.getApplicationContext();
+        .openHttpsUrlConnection(
+            TEST_APP_ID_1, TEST_FID_1, TEST_API_KEY, TEST_AUTH_TOKEN, applicationContext);
   }
 
   @Test
@@ -195,6 +198,18 @@ public class FirebaseAppDistributionTesterApiClientTest {
     assertEquals(FirebaseAppDistributionException.Status.UNKNOWN, ex.getErrorCode());
     assertEquals("Error parsing service response", ex.getMessage());
     assert (ex.getCause() instanceof JSONException);
+  }
+
+  @Test
+  public void fetchNewRelease_whenNoReleases_returnsNull() throws Exception {
+    JSONObject releaseJson = getTestJSON("testNoReleasesResponse.json");
+    InputStream response =
+        new ByteArrayInputStream(releaseJson.toString().getBytes(StandardCharsets.UTF_8));
+    when(mockHttpsURLConnection.getInputStream()).thenReturn(response);
+    AppDistributionReleaseInternal release =
+        firebaseAppDistributionTesterApiClient.fetchNewRelease(
+            TEST_FID_1, TEST_APP_ID_1, TEST_API_KEY, TEST_AUTH_TOKEN, applicationContext);
+    assertNull(release);
   }
 
   private JSONObject getTestJSON(String fileName) throws IOException, JSONException {
